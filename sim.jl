@@ -15,6 +15,43 @@ function genIOp(nsites::Int64)
     return p
 end
 
+function genBWClif(nsites::Int64,depth::Int64)
+    U = genIOp(nsites)
+    for i = 1:depth
+        parity = i%2
+        nbrick = floor(Int,(nsites-parity)/2)
+        for j = 1:nbrick
+            if j == 1
+                UBW = random_clifford(2)
+            else
+                UBW = UBW ⊗ random_clifford(2)
+            end
+        end
+
+        if parity == 1
+            UBW = genIOp(1) ⊗ UBW
+        end
+
+        if (nsites-parity)%2 == 1
+            UBW = UBW ⊗ genIOp(1) 
+        end
+
+        U = U * UBW 
+    end
+    return U
+end
+
+function reverseOp(UL::CliffordOperator,nsites::Int64)
+    UR = copy(UL)
+    for i = 1:nsites
+        for j = 1:nsites
+            UR[i,j] = UL[nsites+1-i,nsites+1-j]
+            UR[i+nsites,j] = UL[2*nsites+1-i,nsites+1-j]
+        end
+    end
+    return UR
+end
+
 function genBellState(nsites::Int64)
     s = zero(Stabilizer,2*nsites)
     for i = 1:nsites
@@ -71,19 +108,30 @@ function applyRandClif(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::I
     apply!(reg,U)
 end
 
+function applyBW(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,depth::Int64)
+    IA = genIOp(n_Asites)
+    IC = genIOp(n_Csites)
+    UB = genBWClif(n_Bsites,depth)
+    U = IA ⊗ UB ⊗ IC
+    apply!(reg,U)
+end
+
 function applyHPClif(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64)
     half_Bsites = floor(Int,n_Bsites/2)
     IA = genIOp(n_Asites)
     IC = genIOp(n_Csites)
     UBL = random_clifford(half_Bsites)
-    # UBR = random_clifford(half_Bsites)
-    UBR = copy(UBL)
-    for i = 1:half_Bsites
-        for j = 1:half_Bsites
-            UBR[i,j] = UBL[half_Bsites+1-i,half_Bsites+1-j]
-            UBR[i+half_Bsites,j] = UBL[2*half_Bsites+1-i,half_Bsites+1-j]
-        end
-    end
+    UBR = reverseOp(UBL,half_Bsites)
+    U = IA ⊗ UBL ⊗ UBR ⊗ IC
+    apply!(reg,U)
+end
+
+function applyHPBW(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,depth::Int64)
+    half_Bsites = floor(Int,n_Bsites/2)
+    IA = genIOp(n_Asites)
+    IC = genIOp(n_Csites)
+    UBL = genBWClif(half_Bsites,depth)
+    UBR = reverseOp(UBL,half_Bsites)
     U = IA ⊗ UBL ⊗ UBR ⊗ IC
     apply!(reg,U)
 end
@@ -152,6 +200,13 @@ function simRndClifMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::
     return cmi(reg,n_Asites,n_Bsites,n_Csites)
 end
 
+function simBWMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::Int64,depth::Int64)
+    reg = genInitABC(n_Asites,n_Bsites,n_Csites)
+    applyBW(reg,n_Asites,n_Bsites,n_Csites,depth)
+    randMeasB(reg,n_Asites,n_Bsites,n_Csites,n_meas)
+    return cmi(reg,n_Asites,n_Bsites,n_Csites)
+end
+
 function simHPClifMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::Int64)
     reg = genInitHP(n_Asites,n_Bsites,n_Csites)
     applyHPClif(reg,n_Asites,n_Bsites,n_Csites)
@@ -159,9 +214,23 @@ function simHPClifMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::I
     return cmi(reg,n_Asites,n_Bsites,n_Csites)
 end
 
+function simHPBWsMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::Int64,depth::Int64)
+    reg = genInitHP(n_Asites,n_Bsites,n_Csites)
+    applyHPBW(reg,n_Asites,n_Bsites,n_Csites,depth)
+    randMeasB(reg,n_Asites,n_Bsites,n_Csites,n_meas)
+    return cmi(reg,n_Asites,n_Bsites,n_Csites)
+end
+
 function simHPClifBMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::Int64)
     reg = genInitHP(n_Asites,n_Bsites,n_Csites)
     applyHPClif(reg,n_Asites,n_Bsites,n_Csites)
+    randBellMeasB(reg,n_Asites,n_Bsites,n_Csites,n_meas)
+    return cmi(reg,n_Asites,n_Bsites,n_Csites)
+end
+
+function simHPBWBMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::Int64,depth::Int64)
+    reg = genInitHP(n_Asites,n_Bsites,n_Csites)
+    applyHPBW(reg,n_Asites,n_Bsites,n_Csites,depth)
     randBellMeasB(reg,n_Asites,n_Bsites,n_Csites,n_meas)
     return cmi(reg,n_Asites,n_Bsites,n_Csites)
 end

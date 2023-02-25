@@ -1,0 +1,12 @@
+230225 nsim = 1000
+id, n_Asites, n_Bsites, n_Csites, n_meas_start, n_meas_end, n_meas_step, depth, comments
+
+1-2, 1 ,20:20:40, 1, n_Bsites-10, n_Bsites, 1, n_Bsites, BW
+
+3-7, 1 ,20:20:40, 1, n_Bsites-10, n_Bsites, 1, 10, BW
+
+8-11, 1 ,20:20:80, 1, 2, 20, 2, n_Bsites, HPBBW
+
+12-16, 10 ,20:20:100, 10, 2, 20, 2, 10, HPBBW
+
+17-21, 10 ,20:20:100, 10, 2, 20, 2, 10, HPBBW

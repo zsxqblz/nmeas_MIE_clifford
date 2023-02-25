@@ -2,21 +2,42 @@ include("dependencies.jl")
 include("sim.jl")
 include("exp.jl")
 
-for i = 11:20
-    n_Asites = i
-    n_Bsites = 40
-    n_Csites = i
+for i = 1:5
+    n_Asites = 10
+    n_Bsites = 20*i
+    n_Csites = 10
     nsim = 1000
     n_meas_start = 2
-    n_meas_end = 40
+    n_meas_end = 20
     n_meas_step = 2
+    depth = 10
 
-    save_idx_start = 171
+    save_idx_start = 16
     n_meas_l = floor.(Int,collect(range(n_meas_start,stop=n_meas_end,step=n_meas_step)))
-    cmi_ave,cmi_std = scanNmeasHP(n_Asites,n_Bsites,n_Csites,n_meas_start,n_meas_end,n_meas_step,nsim,true)
-    save1DData(n_meas_l,cmi_ave,cmi_std,string("data/230213_",save_idx_start+i))
+    cmi_ave,cmi_std = scanNmeasHPBBW(n_Asites,n_Bsites,n_Csites,n_meas_start,n_meas_end,n_meas_step,depth,nsim,true)
+    save1DData(n_meas_l,cmi_ave,cmi_std,string("data/230225/230225_",save_idx_start+i))
 end
 
+let
+    n_Asites = 10
+    n_Bsites = 100
+    n_Csites = 10
+    nsim = 100
+    n_meas_start = 80
+    n_meas_end = 100
+    n_meas_step = 2
+    depth_start = 60
+    depth_end = 100
+    depth_step = 4
+
+    save_idx = 2
+    n_meas_l = floor.(Int,collect(range(n_meas_start,stop=n_meas_end,step=n_meas_step)))
+    n_meas_length = length(n_meas_l)
+    depth_l = floor.(Int,collect(range(n_meas_start,stop=n_meas_end,step=n_meas_step)))
+    depth_length = length(n_meas_l)
+    cmi_ave,cmi_std = scanNmeasDepthBW(n_Asites,n_Bsites,n_Csites,n_meas_start,n_meas_end,n_meas_step,depth_start,depth_end,depth_step,nsim,true)
+    save2DData(n_meas_l,depth_l,cmi_ave,cmi_std,string("data/230225/230225_2d_",save_idx))
+end
 
 plot(n_meas_l,abs.(cmi_ave.+0.001),yaxis=:log)
 # p = genIStr(2)
@@ -43,3 +64,7 @@ plot(n_meas_l,abs.(cmi_ave.+0.001),yaxis=:log)
 # cmi(reg,1,4,1)
 
 string("data/230213_",1)
+
+let 
+    typeof(random_clifford(2))
+end
