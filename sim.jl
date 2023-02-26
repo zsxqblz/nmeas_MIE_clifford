@@ -214,7 +214,7 @@ function simHPClifMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::I
     return cmi(reg,n_Asites,n_Bsites,n_Csites)
 end
 
-function simHPBWsMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::Int64,depth::Int64)
+function simHPBWMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::Int64,depth::Int64)
     reg = genInitHP(n_Asites,n_Bsites,n_Csites)
     applyHPBW(reg,n_Asites,n_Bsites,n_Csites,depth)
     randMeasB(reg,n_Asites,n_Bsites,n_Csites,n_meas)
