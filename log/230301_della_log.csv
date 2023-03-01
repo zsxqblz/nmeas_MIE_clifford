@@ -1,0 +1,7 @@
+230225 nsim = 100, njobs = 100
+id, n_Asites, n_Bsites, n_Csites, n_meas_start, n_meas_end, n_meas_step, depth_start, depth_end, depth_step, comments
+nd1, 10, 100, 10, 2, 100, 2, 0, 120, 2, HPBW
+nd2, 10, 120, 10, 2, 100, 2, 0, 120, 2, HPBW
+nd3, 10, 140, 10, 2, 100, 2, 0, 120, 2, HPBW
+nd4, 10, 160, 10, 2, 100, 2, 0, 120, 2, HPBW
+nd5, 10, 180, 10, 2, 100, 2, 0, 120, 2, HPBW
