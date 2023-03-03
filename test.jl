@@ -2,20 +2,19 @@ include("dependencies.jl")
 include("sim.jl")
 include("exp.jl")
 
-for i = 1:5
+for i = 2:6
     n_Asites = 10
     n_Bsites = 20*i
     n_Csites = 10
     nsim = 1000
-    n_meas_start = 2
-    n_meas_end = 20
-    n_meas_step = 2
-    depth = 10
+    n_meas_start = n_Bsites-38
+    n_meas_end = n_Bsites
+    n_meas_step = 2*i
 
-    save_idx_start = 16
+    save_idx_start = 10
     n_meas_l = floor.(Int,collect(range(n_meas_start,stop=n_meas_end,step=n_meas_step)))
-    cmi_ave,cmi_std = scanNmeasHPBBW(n_Asites,n_Bsites,n_Csites,n_meas_start,n_meas_end,n_meas_step,depth,nsim,true)
-    save1DData(n_meas_l,cmi_ave,cmi_std,string("data/230225/230225_",save_idx_start+i))
+    cmi_ave,cmi_std = scanNmeasTMB(n_Asites,n_Bsites,n_Csites,n_meas_start,n_meas_end,n_meas_step,nsim,true)
+    save1DData(n_meas_l,cmi_ave,cmi_std,string("data/230226/230226_",save_idx_start+i))
 end
 
 let

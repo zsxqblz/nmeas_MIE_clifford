@@ -1,0 +1,6 @@
+230225 nsim = 1000
+id, n_Asites, n_Bsites, n_Csites, n_meas_start, n_meas_end, n_meas_step, comments
+
+1-5, 10 ,20:20:100, 10, 2, 20, 2, TMB
+6-10, 10 ,20:20:100, 10, 2, n_Bsites, 2i, TMB
+12-16, 10 ,40:20:120, 10, n_Bsites-38, n_Bsites, 2, TMB
