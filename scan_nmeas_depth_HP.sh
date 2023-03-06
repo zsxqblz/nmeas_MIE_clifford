@@ -10,4 +10,4 @@
 #SBATCH --array=0-99
 #SBATCH --mail-user=yz4281@princeton.edu
 
-julia scan_nmeas_depth_HP.jl 2 100 2 0 120 2 10 180 10 100 data/230301/230301_nd5_$SLURM_ARRAY_TASK_ID
+julia scan_nmeas_depth_HP.jl 2 100 2 0 120 2 10 200 10 100 data/230301/230301_nd5_$SLURM_ARRAY_TASK_ID

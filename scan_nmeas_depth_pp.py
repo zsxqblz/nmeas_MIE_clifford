@@ -2,7 +2,7 @@ import numpy as np
 from tqdm import tqdm
 import os.path
 
-file_name = "data/230226/230226_nd3_"
+file_name = "data/230305/230305_nd8_"
 
 job_arr_start = 0
 job_arr_end = 99
@@ -14,6 +14,7 @@ cnt = 0
 for job_id in tqdm(job_arr_l):
     job_name = file_name + str(job_id)
     if os.path.isfile(job_name+"_scanx.csv") == False:
+        print(job_id)
         continue
 
     if cnt == 0:
