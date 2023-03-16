@@ -2,10 +2,10 @@ import numpy as np
 from tqdm import tqdm
 import os.path
 
-file_name = "data/230305/230305_nd8_"
+file_name = "data/230313/230313_nd3_"
 
 job_arr_start = 0
-job_arr_end = 99
+job_arr_end = 499
 job_arr_step = 1
 job_arr_l = np.arange(job_arr_start,job_arr_end+1,job_arr_step)
 
