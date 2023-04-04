@@ -1,0 +1,5 @@
+230322 nsim = 1000
+id, n_Asites, n_Bsites, n_Csites, n_meas_start, n_meas_end, n_meas_step, depth_start, depth_end, depth_step, comments
+1, 10 , 100, 10, 0, 20, 1, 0, 5, 1, HPBDiff Bell
+1, 10 , 100, 10, 0, 20, 1, 0, 5, 1, HPBDiff Pair
+1, 10 , 100, 10, 0, 100, 2, 0, 5, 1, HPBDiff Bell

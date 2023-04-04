@@ -136,6 +136,16 @@ function applyHPBW(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64
     apply!(reg,U)
 end
 
+function applyHPBWLeft(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,depth::Int64)
+    half_Bsites = floor(Int,n_Bsites/2)
+    IA = genIOp(n_Asites)
+    IC = genIOp(n_Csites)
+    UBL = genBWClif(half_Bsites,depth)
+    UBR = genIOp(half_Bsites)
+    U = IA ⊗ UBL ⊗ UBR ⊗ IC
+    apply!(reg,U)
+end
+
 function applyTwoRandClif(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64)
     half_Bsites = floor(Int,n_Bsites/2)
     IA = genIOp(n_Asites)
@@ -163,6 +173,20 @@ function randBellMeasB(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::I
         zz_op = single_z(n_sites,i+n_Asites)
         zz_op[n_Asites+n_Bsites+1-i] = (false,true)
         projectrand!(reg,zz_op)
+        xx_op = single_x(n_sites,i+n_Asites)
+        xx_op[n_Asites+n_Bsites+1-i] = (true,false)
+        projectrand!(reg,xx_op)
+    end
+end
+
+function randPairMeasB(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,nmeas::Int64)
+    n_sites = n_Asites+n_Bsites+n_Csites
+    h_Bsites = floor(Int,n_Bsites/2)
+    hmeas = floor(Int,nmeas/2)
+    meas_idx = sample(collect(1:h_Bsites),hmeas,replace=false)
+    for i in meas_idx
+        apply!(reg,sMZ(i+n_Asites,1)) 
+        apply!(reg,sMZ(n_Asites+n_Bsites+1-i,1))
     end
 end
 
@@ -228,10 +252,26 @@ function simHPBWMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::Int
     return cmi(reg,n_Asites,n_Bsites,n_Csites)
 end
 
+function simHPDiffBMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::Int64,depth::Int64)
+    reg = genInitHP(n_Asites,n_Bsites,n_Csites)
+    applyHPClif(reg,n_Asites,n_Bsites,n_Csites)
+    applyHPBWLeft(reg,n_Asites,n_Bsites,n_Csites,depth)
+    randBellMeasB(reg,n_Asites,n_Bsites,n_Csites,n_meas)
+    return cmi(reg,n_Asites,n_Bsites,n_Csites)
+end
+
 function simHPClifBMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::Int64)
     reg = genInitHP(n_Asites,n_Bsites,n_Csites)
     applyHPClif(reg,n_Asites,n_Bsites,n_Csites)
     randBellMeasB(reg,n_Asites,n_Bsites,n_Csites,n_meas)
+    return cmi(reg,n_Asites,n_Bsites,n_Csites)
+end
+
+
+function simHPClifPMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::Int64)
+    reg = genInitHP(n_Asites,n_Bsites,n_Csites)
+    applyHPClif(reg,n_Asites,n_Bsites,n_Csites)
+    randPairMeasB(reg,n_Asites,n_Bsites,n_Csites,n_meas)
     return cmi(reg,n_Asites,n_Bsites,n_Csites)
 end
 

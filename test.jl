@@ -2,19 +2,19 @@ include("dependencies.jl")
 include("sim.jl")
 include("exp.jl")
 
-for i = 2:6
+for i = 1:5
     n_Asites = 10
     n_Bsites = 20*i
     n_Csites = 10
     nsim = 1000
-    n_meas_start = n_Bsites-38
+    n_meas_start = 0
     n_meas_end = n_Bsites
     n_meas_step = 2*i
 
     save_idx_start = 10
     n_meas_l = floor.(Int,collect(range(n_meas_start,stop=n_meas_end,step=n_meas_step)))
-    cmi_ave,cmi_std = scanNmeasTMB(n_Asites,n_Bsites,n_Csites,n_meas_start,n_meas_end,n_meas_step,nsim,true)
-    save1DData(n_meas_l,cmi_ave,cmi_std,string("data/230226/230226_",save_idx_start+i))
+    cmi_ave,cmi_std = scanNmeasHPP(n_Asites,n_Bsites,n_Csites,n_meas_start,n_meas_end,n_meas_step,nsim,true)
+    save1DData(n_meas_l,cmi_ave,cmi_std,string("data/230317/230317_",save_idx_start+i))
 end
 
 let
@@ -22,20 +22,42 @@ let
     n_Bsites = 100
     n_Csites = 10
     nsim = 100
-    n_meas_start = 80
+    n_meas_start = 0
     n_meas_end = 100
     n_meas_step = 2
-    depth_start = 60
-    depth_end = 100
-    depth_step = 4
+    depth_start = 0
+    depth_end = 5
+    depth_step = 1
 
-    save_idx = 2
+    save_idx = 3
     n_meas_l = floor.(Int,collect(range(n_meas_start,stop=n_meas_end,step=n_meas_step)))
     n_meas_length = length(n_meas_l)
-    depth_l = floor.(Int,collect(range(n_meas_start,stop=n_meas_end,step=n_meas_step)))
+    depth_l = floor.(Int,collect(range(depth_start,stop=depth_end,step=depth_step)))
     depth_length = length(n_meas_l)
-    cmi_ave,cmi_std = scanNmeasDepthBW(n_Asites,n_Bsites,n_Csites,n_meas_start,n_meas_end,n_meas_step,depth_start,depth_end,depth_step,nsim,true)
-    save2DData(n_meas_l,depth_l,cmi_ave,cmi_std,string("data/230225/230225_2d_",save_idx))
+    cmi_ave,cmi_std = scanNmeasDepthHPBDiff(n_Asites,n_Bsites,n_Csites,n_meas_start,n_meas_end,n_meas_step,depth_start,depth_end,depth_step,nsim,true)
+    save2DData(n_meas_l,depth_l,cmi_ave,cmi_std,string("data/230322/230322_",save_idx))
+end
+
+let
+    n_Asites = 10
+    n_Bsites = 100
+    n_Csites = 10
+    nsim = 100
+    n_meas_start = 0
+    n_meas_end = 10
+    n_meas_step = 2
+    depth_start = 0
+    depth_end = 5
+    depth_step = 1
+
+    save_idx = 3
+    n_meas_l = floor.(Int,collect(range(n_meas_start,stop=n_meas_end,step=n_meas_step)))
+    n_meas_length = length(n_meas_l)
+    depth_l = floor.(Int,collect(range(depth_start,stop=depth_end,step=depth_step)))
+    depth_length = length(n_meas_l)
+    cmi_ave,cmi_std = scanNmeasDepthHPBDiff(n_Asites,n_Bsites,n_Csites,n_meas_start,n_meas_end,n_meas_step,depth_start,depth_end,depth_step,nsim,true)
+    @time scanNmeasDepthHPBDiff(n_Asites,n_Bsites,n_Csites,n_meas_start,n_meas_end,n_meas_step,depth_start,depth_end,depth_step,nsim,true)
+    # save2DData(n_meas_l,depth_l,cmi_ave,cmi_std,string("data/230322/230322_",save_idx))
 end
 
 plot(n_meas_l,abs.(cmi_ave.+0.001),yaxis=:log)
