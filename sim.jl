@@ -91,6 +91,15 @@ function genInitABC(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64)
     return reg
 end
 
+function genProdInitABC(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64)
+    sA = genProdZState(n_Asites)
+    sC = genProdZState(n_Csites)
+    sB = genProdZState(n_Bsites)
+    boolStr = Vector{Bool}(undef,n_Asites+n_Bsites+n_Csites)
+    reg = Register(MixedDestabilizer(sA⊗sB⊗sC), boolStr)
+    return reg
+end
+
 function genInitHP(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64)
     sA = genBellState(n_Asites)
     sC = genBellState(n_Csites)
@@ -113,6 +122,11 @@ function applyBW(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,d
     IC = genIOp(n_Csites)
     UB = genBWClif(n_Bsites,depth)
     U = IA ⊗ UB ⊗ IC
+    apply!(reg,U)
+end
+
+function applyProdBW(reg::Register,n_sites::Int64,depth::Int64)
+    U = genBWClif(n_sites,depth)
     apply!(reg,U)
 end
 
@@ -190,25 +204,6 @@ function randPairMeasB(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::I
     end
 end
 
-# function applyRandPauli(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,pauli_prob::Float64)
-#     half_Bsites = floor(Int,n_Bsites/2)
-#     IA = genIOp(n_Asites)
-#     IC = genIOp(n_Csites)
-#     IBL = genIOp(half_Bsites)
-#     # UBR = random_clifford(half_Bsites)
-#     UBR = copy(IBL)
-#     pauli_rand = rand(Float64,half_Bsites)
-#     for i = 1:half_Bsites
-#         if pauli_rand[i] < pauli_prob
-#             pauli = mod(rand(Int64),3)
-#             if pauli == 0
-#                 UBR[i,i]
-#         end
-#     end
-#     U = IA ⊗ IBL ⊗ UBR ⊗ IC
-#     apply!(reg,U)
-# end
-
 function cmi(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64)
     SAB = entanglement_entropy(reg.stab,collect(1:n_Asites+n_Bsites),Val(:rref))
     SBC = entanglement_entropy(reg.stab,collect(n_Asites+1:n_Asites+n_Bsites+n_Csites),Val(:rref))
@@ -227,6 +222,13 @@ end
 function simBWMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::Int64,depth::Int64)
     reg = genInitABC(n_Asites,n_Bsites,n_Csites)
     applyBW(reg,n_Asites,n_Bsites,n_Csites,depth)
+    randMeasB(reg,n_Asites,n_Bsites,n_Csites,n_meas)
+    return cmi(reg,n_Asites,n_Bsites,n_Csites)
+end
+
+function simProdBWMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::Int64,depth::Int64)
+    reg = genProdInitABC(n_Asites,n_Bsites,n_Csites)
+    applyProdBW(reg,n_Asites+n_Bsites+n_Csites,depth)
     randMeasB(reg,n_Asites,n_Bsites,n_Csites,n_meas)
     return cmi(reg,n_Asites,n_Bsites,n_Csites)
 end

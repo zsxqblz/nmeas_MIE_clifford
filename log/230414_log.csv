@@ -1,0 +1,7 @@
+230322 nsim = 1000
+id, n_Asites, n_Bsites, n_Csites, n_meas_start, n_meas_end, n_meas_step, depth_start, depth_end, depth_step, nsim, comments
+1, 10 , 100, 10, 90, 100, 1, 0, 100, 2, 100, ProdBW
+2, 10 , 100, 10, 0, 10, 1, 0, 100, 2, 100, ProdBW
+3, 1 , 10, 1, 0, 10, 1, 0, 20, 1, 1000, ProdBW
+4, 1 , 10, 1, 0, 10, 1, 0, 20, 1, 1000, BW
+5, 1 , 10, 1, 0, 10, 1, 0, 40, 2, 1000, ProdBW
