@@ -212,6 +212,19 @@ function cmi(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64)
     return SAB + SBC - SB - SABC 
 end
 
+function mi(reg::Register,AsitesArr::Vector{Int64},CsitesArr::Vector{Int64})
+    SA = entanglement_entropy(reg.stab,AsitesArr,Val(:rref))
+    SC = entanglement_entropy(reg.stab,CsitesArr,Val(:rref))
+    SAC = entanglement_entropy(reg.stab,vcat(AsitesArr,CsitesArr),Val(:rref))
+    return SA + SC - SAC 
+end
+
+function ci(reg::Register,AsitesArr::Vector{Int64},CsitesArr::Vector{Int64})
+    SC = entanglement_entropy(reg.stab,CsitesArr,Val(:rref))
+    SAC = entanglement_entropy(reg.stab,vcat(AsitesArr,CsitesArr),Val(:rref))
+    return SC - SAC 
+end
+
 function simRndClifMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::Int64)
     reg = genInitABC(n_Asites,n_Bsites,n_Csites)
     applyRandClif(reg,n_Asites,n_Bsites,n_Csites)

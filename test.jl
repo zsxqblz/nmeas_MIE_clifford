@@ -1,6 +1,7 @@
 include("dependencies.jl")
 include("sim.jl")
 include("exp.jl")
+include("exp_2D.jl")
 
 for i = 1:5
     n_Asites = 10
@@ -61,32 +62,30 @@ let
     save2DData(n_meas_l,depth_l,cmi_ave,cmi_std,string("data/230414/230414_",save_idx))
 end
 
-plot(n_meas_l,abs.(cmi_ave.+0.001),yaxis=:log)
-# p = genIStr(2)
-# p = S"X"
-# p = Destabilizer(p)
-# p = CliffordOperator(p)
-# u = random_clifford(3)
-# p ⊗ u
-# reg = genInitABC(1,3,1)
+let
+    run(`clear`)
+    dx = 10
+    dy = 10
+    nsim = 10
+    n_meas_start = 0
+    n_meas_end = dx*dy
+    n_meas_step = 1
+    depth_start = 0
+    depth_end = 2*dx
+    depth_step = 2
 
-# apply!(reg,u)
-# p = zero(CliffordOperator,2)
-# p[1,1] = (fa)
-
-# p = genIOp(2)
-# p ⊗ u
-
-
-# reg = genInitHP(1,4,1)
-# randBellMeasB(reg,1,4,1,2)
-# applyRandClif(reg,1,3,1)
-# reg
-# floor.(Int,[1.1,1.2])
-# cmi(reg,1,4,1)
-
-string("data/230213_",1)
+    save_idx = 1
+    n_meas_l = floor.(Int,collect(range(n_meas_start,stop=n_meas_end,step=n_meas_step)))
+    n_meas_length = length(n_meas_l)
+    depth_l = floor.(Int,collect(range(depth_start,stop=depth_end,step=depth_step)))
+    depth_length = length(n_meas_l)
+    cmi_ave,cmi_std = scanNmeasDepth2D(sim2DBW,dx,dy,n_meas_start,n_meas_end,n_meas_step,depth_start,depth_end,depth_step,nsim,true)
+    # @time scanNmeasDepthHPBDiff(n_Asites,n_Bsites,n_Csites,n_meas_start,n_meas_end,n_meas_step,depth_start,depth_end,depth_step,nsim,true)
+    save2DData(n_meas_l,depth_l,cmi_ave,cmi_std,string("data/230507/230507_",save_idx))
+end
 
 let 
-    typeof(random_clifford(2))
+    reg = genInitABC(1,4,1)
+    apply!(reg.stab,random_clifford(2),[2,3])
+    reg.stab
 end
