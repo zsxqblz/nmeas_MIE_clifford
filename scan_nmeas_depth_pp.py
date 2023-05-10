@@ -2,7 +2,7 @@ import numpy as np
 from tqdm import tqdm
 import os.path
 
-file_name = "data/230313/230313_nd3_"
+file_name = "data/230313/230313_nd4_"
 
 job_arr_start = 0
 job_arr_end = 499
