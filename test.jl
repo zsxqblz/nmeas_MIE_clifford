@@ -1,7 +1,7 @@
 include("dependencies.jl")
 include("sim.jl")
 include("exp.jl")
-include("exp_2D.jl")
+include("exp_1D.jl")
 
 for i = 1:5
     n_Asites = 10
@@ -62,6 +62,7 @@ let
     save2DData(n_meas_l,depth_l,cmi_ave,cmi_std,string("data/230414/230414_",save_idx))
 end
 
+# exp_2D
 let
     run(`clear`)
     dx = 10
@@ -82,6 +83,31 @@ let
     cmi_ave,cmi_std = scanNmeasDepth2D(sim2DBW,dx,dy,n_meas_start,n_meas_end,n_meas_step,depth_start,depth_end,depth_step,nsim,true)
     # @time scanNmeasDepthHPBDiff(n_Asites,n_Bsites,n_Csites,n_meas_start,n_meas_end,n_meas_step,depth_start,depth_end,depth_step,nsim,true)
     save2DData(n_meas_l,depth_l,cmi_ave,cmi_std,string("data/230507/230507_",save_idx))
+end
+
+# exp_1D
+let
+    run(`clear`)
+    n_Asites = 10
+    n_Bsites = 100
+    n_Csites = 10
+    nsim = 100
+    n_meas_start = 70
+    n_meas_end = 100
+    n_meas_step = 3
+    depth_start = 0
+    depth_end = 60
+    depth_step = 4
+
+    save_idx = 2
+    n_meas_l = floor.(Int,collect(range(n_meas_start,stop=n_meas_end,step=n_meas_step)))
+    n_meas_length = length(n_meas_l)
+    depth_l = floor.(Int,collect(range(depth_start,stop=depth_end,step=depth_step)))
+    depth_length = length(n_meas_l)
+    SA_ave_arr,SA_std_arr,SC_ave_arr,SC_std_arr,SAC_ave_arr,SAC_std_arr = scanNmeasDepth1D(simBWMeas1D,n_Asites,n_Bsites,n_Csites,n_meas_start,n_meas_end,n_meas_step,depth_start,depth_end,depth_step,nsim,true)
+    save2DData(n_meas_l,depth_l,SA_ave_arr,SA_std_arr,string("data/230510/230510_",save_idx,"_SA"))
+    save2DData(n_meas_l,depth_l,SC_ave_arr,SC_std_arr,string("data/230510/230510_",save_idx,"_SC"))
+    save2DData(n_meas_l,depth_l,SAC_ave_arr,SAC_std_arr,string("data/230510/230510_",save_idx,"_SAC"))
 end
 
 let 
