@@ -190,19 +190,20 @@ end
 
 # exp_1D erasure
 let
+    i = 1
     run(`clear`)
-    n_Asites = 10
-    n_Bsites = 100
-    n_Csites = 10
+    n_Asites = 20
+    n_Bsites = 100 + 10*i
+    n_Csites = 20
     nsim = 100
-    n_meas_start = 0
-    n_meas_end = 100
+    n_meas_start = 30
+    n_meas_end = 70
     n_meas_step = 5
     depth_start = 0
-    depth_end = 100
-    depth_step = 8
+    depth_end = 60
+    depth_step = 6
 
-    save_idx = 1
+    save_idx = 3
     n_meas_l = floor.(Int,collect(range(n_meas_start,stop=n_meas_end,step=n_meas_step)))
     n_meas_length = length(n_meas_l)
     depth_l = floor.(Int,collect(range(depth_start,stop=depth_end,step=depth_step)))
