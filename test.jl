@@ -195,12 +195,12 @@ let
     n_Bsites = 100
     n_Csites = 10
     nsim = 100
-    n_meas_start = 70
+    n_meas_start = 0
     n_meas_end = 100
-    n_meas_step = 3
+    n_meas_step = 5
     depth_start = 0
-    depth_end = 50
-    depth_step = 4
+    depth_end = 100
+    depth_step = 8
 
     save_idx = 1
     n_meas_l = floor.(Int,collect(range(n_meas_start,stop=n_meas_end,step=n_meas_step)))
