@@ -178,6 +178,12 @@ function randMeasB(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64
     end
 end
 
+function randErasB(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,nmeas::Int64)
+    n_sites = n_Asites+n_Bsites+n_Csites
+    eras_idx = sample(collect(1:n_Bsites),nmeas,replace=false)
+    traceout!(reg.stab,eras_idx.+n_Asites)
+end
+
 function randBellMeasB(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,nmeas::Int64)
     n_sites = n_Asites+n_Bsites+n_Csites
     h_Bsites = floor(Int,n_Bsites/2)
@@ -236,6 +242,13 @@ function simBWMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::Int64
     reg = genInitABC(n_Asites,n_Bsites,n_Csites)
     applyBW(reg,n_Asites,n_Bsites,n_Csites,depth)
     randMeasB(reg,n_Asites,n_Bsites,n_Csites,n_meas)
+    return cmi(reg,n_Asites,n_Bsites,n_Csites)
+end
+
+function simBWEras(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::Int64,depth::Int64)
+    reg = genInitABC(n_Asites,n_Bsites,n_Csites)
+    applyBW(reg,n_Asites,n_Bsites,n_Csites,depth)
+    randErasB(reg,n_Asites,n_Bsites,n_Csites,n_meas)
     return cmi(reg,n_Asites,n_Bsites,n_Csites)
 end
 

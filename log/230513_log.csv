@@ -1,0 +1,5 @@
+id, dx, dy, dA, dC, n_meas_start, n_meas_end, n_meas_step, depth_start, depth_end, depth_step, nsim, comments
+1, 5, 5, 1, 1, 0, dx*dB, 1, 0, 2*dx, 2, 100, 2DBW prod init
+2, 10, 10, 2, 2, 0, dx*dB, 4, 0, 2*dx, 2, 100, 2DBW prod init
+3, 15, 15, 3, 3, 0, dx*dB, 9, 0, 2*dx, 2, 100, 2DBW prod init
+4, 5, 15, 5, 5, 0, dx*dB, 3, 0, 2*dx, 2, 100, 2DBW prod init
