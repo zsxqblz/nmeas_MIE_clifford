@@ -1,0 +1,3 @@
+240206 nsim = 1000
+id, n_Asites, n_Bsites, n_Csites, n_meas_start, n_meas_end, n_meas_step, comments
+1-5, 10 ,20:20:100, 10, 0, 20*i, 2*i, ProdHP
