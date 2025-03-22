@@ -16,8 +16,8 @@ let n_Csites=20+4*i
 let n_meas_start=30+6*i
 let n_meas_end=70+14*i
 let n_meas_step=i
-let depth_start=0
-let depth_end=60
+let depth_start=20
+let depth_end=80
 let depth_step=2
 let nsim=100
 

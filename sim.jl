@@ -178,6 +178,74 @@ function randMeasB(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64
     end
 end
 
+function randMeasBProb(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,nmeas::Int64)
+    n_sites = n_Asites+n_Bsites+n_Csites
+    num_anticommute = 0
+    p = genIStr(n_Asites+n_Bsites+n_Csites)
+    for i = n_Asites+1:n_Asites+n_Bsites
+        # sv = stabilizerview(reg.stab)
+        # anticommute_flag = false
+        # for gen in sv
+        #     if gen[i] == (false, true)
+        #         anticommute_flag = true
+        #         break
+        #     end
+        # end
+        # if anticommute_flag
+        #     num_anticommute += 1
+        # end
+
+        p[i] = (false, true)
+        if expect(p,reg.stab) == 0
+            num_anticommute += 1
+        end
+        p[i] = (false, false)
+
+        apply!(reg,sMZ(i,1))
+    end
+    # if entanglement_entropy(reg,collect(1:n_Asites+n_Bsites+n_Csites))
+
+    return num_anticommute
+end
+
+function randMeasBProb(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64)
+    n_sites = n_Asites+n_Bsites+n_Csites
+    num_anticommute = 0
+    p = genIStr(n_Asites+n_Bsites+n_Csites)
+    for i = n_Asites+1:n_Asites+n_Bsites
+        p[i] = (false, true)
+        if expect(p,reg.stab) == 0
+            num_anticommute += 1
+        end
+        p[i] = (false, false)
+
+        apply!(reg,sMZ(i,1))
+    end
+
+    return num_anticommute
+end
+
+function randMeasBCProb(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,dx::Int64,dy::Int64,dC::Int64)
+    n_sites = n_Asites+n_Bsites+n_Csites
+    num_anticommute = 0
+    p = genIStr(n_Asites+n_Bsites+n_Csites)
+    CsiteID = vertexToId2D(dx, dy, Int(floor(dx/2)), dy-dC)
+    for i = n_Asites+1:n_Asites+n_Bsites+n_Csites
+        if i == CsiteID
+            continue
+        end
+        p[i] = (false, true)
+        if expect(p,reg.stab) == 0
+            num_anticommute += 1
+        end
+        p[i] = (false, false)
+
+        apply!(reg,sMZ(i,1))
+    end
+
+    return num_anticommute
+end
+
 function randErasB(reg::Register,n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,nmeas::Int64)
     n_sites = n_Asites+n_Bsites+n_Csites
     eras_idx = sample(collect(1:n_Bsites),nmeas,replace=false)
@@ -263,6 +331,13 @@ function simHPClifMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::I
     reg = genInitHP(n_Asites,n_Bsites,n_Csites)
     applyHPClif(reg,n_Asites,n_Bsites,n_Csites)
     randMeasB(reg,n_Asites,n_Bsites,n_Csites,n_meas)
+    return cmi(reg,n_Asites,n_Bsites,n_Csites)
+end
+
+function simProdHPClifMeas(n_Asites::Int64,n_Bsites::Int64,n_Csites::Int64,n_meas::Int64)
+    reg = genInitABC(n_Asites,n_Bsites,n_Csites)
+    applyHPClif(reg,n_Asites,n_Bsites,n_Csites)
+    randBellMeasB(reg,n_Asites,n_Bsites,n_Csites,n_meas)
     return cmi(reg,n_Asites,n_Bsites,n_Csites)
 end
 
