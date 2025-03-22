@@ -6,6 +6,6 @@ using ProgressMeter
 using Statistics: mean, std
 using Distributions: sample
 using Printf: @printf
-using Plots
+# using Plots
 using DataFrames
 using CSV
